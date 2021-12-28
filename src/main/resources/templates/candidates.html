@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Candidates</title>
+  <style>
+    .center {
+      text-align: center;
+    }
+
+    .size {
+      width: 300px;
+      height: 300px;
+    }
+  </style>
+</head>
+<body>
+<h1 class="center">Кандидаты</h1>
+<h2 class="center">Кто из этих ребят тебе нравится больше? Кликни по фото понравившегося кота</h2>
+  <th:block th:each="cat: ${list}">
+      <tr><div class="center">
+          <img th:id="${cat.id}"
+           th:src="${'data:image/jpg;base64, '+ cat.base64Image}"
+           class="size" onclick="vote(this.id)"></div></tr>
+      <td><div class="center">
+        <input th:id="${cat.id}" type="button" th:value="${cat.name}" onclick="vote(this.id)">
+    </div></td>
+  </th:block>
+</body>
+
+<script>
+  function vote(clickedID) {
+    sendRequest(clickedID, '/candidates');
+    //обновляет страницу
+    location.reload();
+  }
+
+  function sendRequest(data, url) {
+      //https://learn.javascript.ru/xmlhttprequest
+    var xhr = new XMLHttpRequest();
+     // false - запрос выполняется синхронно.
+    xhr.open('POST', url, false);
+    //устанавливает соединение и отсылает запрос к серверу
+    xhr.send(data);
+      xhr.onload = function() {
+          // анализируем HTTP-статус ответа, если статус не 200, то произошла ошибка
+          if (xhr.status != 200) {
+              alert(`Ошибка ${xhr.status}: ${xhr.statusText}`);
+          } else {
+              console.log(xhr.responseText);
+          };
+      }
+
+  }
+</script>
+</html>
